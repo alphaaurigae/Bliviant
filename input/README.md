@@ -1,0 +1,2 @@
+- Input directory
+- `REPO_NAME="bling"` as defined in `shared/config.sh`
