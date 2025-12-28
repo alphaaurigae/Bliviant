@@ -16,10 +16,10 @@ CREATE_SCRIPT="$WORKDIR/create/create_proof.sh"
 DESCRIPTION_FILE="$INPUT_DIR/README_PROOF.txt"
 
 setup_debug() {
-    if [ "${DEBUG:-0}" -eq 1 ]; then
-        mkdir -p "$(dirname "$LOGFILE")"
-        exec > >(tee -a "$LOGFILE") 2> >(tee -a "$LOGFILE" >&2)
-    fi
+	if [ "${DEBUG:-0}" -eq 1 ]; then
+		mkdir -p "$(dirname "$LOGFILE")"
+		exec > >(tee -a "$LOGFILE") 2> >(tee -a "$LOGFILE" >&2)
+	fi
 }
 
 fail_trap() {

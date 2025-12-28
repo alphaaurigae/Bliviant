@@ -18,16 +18,15 @@ REVEAL_OUTPUT_DIR="$OUTPUT_DIR/${PROOF_NAME}"
 
 REVEAL_SCRIPT="$WORKDIR/reveal/reveal_proof.sh"
 
-
 TMP_PROOF_DIR="$(mktemp -d)"
 
 source "$SCRIPT_DIR/shared/proof_verify.sh"
 
 setup_debug() {
-    if [ "${DEBUG:-0}" -eq 1 ]; then
-        mkdir -p "$(dirname "$LOGFILE")"
-        exec > >(tee -a "$LOGFILE") 2> >(tee -a "$LOGFILE" >&2)
-    fi
+	if [ "${DEBUG:-0}" -eq 1 ]; then
+		mkdir -p "$(dirname "$LOGFILE")"
+		exec > >(tee -a "$LOGFILE") 2> >(tee -a "$LOGFILE" >&2)
+	fi
 }
 
 fail_trap() {
@@ -42,15 +41,26 @@ check_requirements() {
 	printf "%s\n" " WORKDIR=$WORKDIR"
 	printf "%s\n" " REVEAL_OUTPUT_DIR=$REVEAL_OUTPUT_DIR"
 
-	[ -f "$PROOF_ARCHIVE" ] || { printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Proof archive not found at $PROOF_ARCHIVE" >&2; exit 1; }
-	[ -x "$REVEAL_SCRIPT" ] || { printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " reveal_proof.sh not executable at $REVEAL_SCRIPT" >&2; exit 2; }
-	[ -f "$PRIVKEY_PATH" ] || { printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Private key not found at $PRIVKEY_PATH" >&2; exit 3; }
-	[ -d "$WORKDIR" ] || { printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Work directory not found at $WORKDIR" >&2; exit 4; }
+	[ -f "$PROOF_ARCHIVE" ] || {
+		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Proof archive not found at $PROOF_ARCHIVE" >&2
+		exit 1
+	}
+	[ -x "$REVEAL_SCRIPT" ] || {
+		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " reveal_proof.sh not executable at $REVEAL_SCRIPT" >&2
+		exit 2
+	}
+	[ -f "$PRIVKEY_PATH" ] || {
+		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Private key not found at $PRIVKEY_PATH" >&2
+		exit 3
+	}
+	[ -d "$WORKDIR" ] || {
+		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Work directory not found at $WORKDIR" >&2
+		exit 4
+	}
 
 	mkdir -p "$REVEAL_OUTPUT_DIR"
 	printf "%s%s%s%s\n" "${BOLD}${GREEN}" "SUCCESS:" "${RESET}" " All requirements passed."
 }
-
 
 extract_proof() {
 	tar -xjf "$PROOF_ARCHIVE" -C "$TMP_PROOF_DIR"
@@ -97,4 +107,4 @@ PROOF_VERIFY_ORIG="$REVEAL_OUTPUT_DIR/.proof/PROOF_VERIFY.txt"
 PROOF_VERIFY_NEW="$REVEAL_OUTPUT_DIR/.proof/PROOF_VERIFY_NEW.txt"
 generate_proof_verify "$REVEAL_OUTPUT_DIR/.proof" "$PROOF_VERIFY_NEW"
 printf "%s%s%s%s\n" "${BOLD}${WHITE}" "INFO:" "${RESET}" " Comparing original proof vs decrypted/revealed proof:"
-compare_proofs "$PROOF_VERIFY_ORIG" "$PROOF_VERIFY_NEW" ||  printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Mismatch detected!"
+compare_proofs "$PROOF_VERIFY_ORIG" "$PROOF_VERIFY_NEW" || printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Mismatch detected!"

@@ -39,8 +39,14 @@ parse_args() {
 
 	while [ "$#" -gt 0 ]; do
 		case "$1" in
-			--encrypt-archive) ENCRYPT_ARCHIVE=1; shift ;;
-			*) if [ -z "$DESC_FILE" ]; then DESC_FILE=$1; fi; shift ;;
+			--encrypt-archive)
+				ENCRYPT_ARCHIVE=1
+				shift
+				;;
+			*)
+				if [ -z "$DESC_FILE" ]; then DESC_FILE=$1; fi
+				shift
+				;;
 		esac
 	done
 }
@@ -71,9 +77,8 @@ prepare_tmp_and_outdir() {
 	trap 'rm -rf "$TMPDIR"' EXIT
 }
 
-
 create_filelist() {
-	find "$REPO_PATH" -type f -printf "%P\0" | sort -z | xargs -0 -I{} sha256sum "$REPO_PATH/{}" > "$TMPDIR/${REPO}_filelist.sha256"
+	find "$REPO_PATH" -type f -printf "%P\0" | sort -z | xargs -0 -I{} sha256sum "$REPO_PATH/{}" >"$TMPDIR/${REPO}_filelist.sha256"
 }
 
 create_archive() {
@@ -92,7 +97,7 @@ prepare_readme() {
 	if [ -n "$DESC_FILE" ] && [ -f "$DESC_FILE" ]; then
 		cp "$DESC_FILE" "$OUTDIR/README_PROOF.txt"
 	else
-		cat > "$OUTDIR/README_PROOF.txt" <<EOF
+		cat >"$OUTDIR/README_PROOF.txt" <<EOF
 $README_MESSAGE
 Repository: $REPO
 Archive: $ARCHIVE_NAME
@@ -107,11 +112,9 @@ generate_keys() {
 	openssl pkey -in "$OUTDIR/proof_private.pem" -pubout -out "$OUTDIR/proof_public.pem"
 }
 
-
-
 derive_pub_for_enc() {
 	if [ -f "$SSH_DIR/$(basename "$PRIVKEY_PATH").pub" ]; then
-		ssh-keygen -f "$SSH_DIR/$(basename "$PRIVKEY_PATH").pub" -e -m PEM > "$TMPDIR/sshpub.pem"
+		ssh-keygen -f "$SSH_DIR/$(basename "$PRIVKEY_PATH").pub" -e -m PEM >"$TMPDIR/sshpub.pem"
 		PUB_FOR_ENC="$TMPDIR/sshpub.pem"
 	else
 		openssl pkey "${OPENSSL_PASSIN_OPTS[@]}" -in "$PRIVKEY_PATH" -pubout -out "$TMPDIR/sshpub.pem" 2>/dev/null || true
@@ -131,19 +134,19 @@ retry_openssl() {
 
 	while true; do
 
-	if "${CMD[@]}"; then
-		return 0
-	fi
+		if "${CMD[@]}"; then
+			return 0
+		fi
 
-	printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " OpenSSL operation failed (attempt $TRY/$MAX_TRIES)" >&2
-	((TRY++))
+		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " OpenSSL operation failed (attempt $TRY/$MAX_TRIES)" >&2
+		((TRY++))
 
-	if [ "$TRY" -gt "$MAX_TRIES" ]; then
-		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " OpenSSL failed repeatedly — possible wrong passphrase or key issue. Aborting." >&2
-		return 1
-	fi
+		if [ "$TRY" -gt "$MAX_TRIES" ]; then
+			printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " OpenSSL failed repeatedly — possible wrong passphrase or key issue. Aborting." >&2
+			return 1
+		fi
 
-	printf "%s%s%s%s\n" "${YELLOW}${RED}" "WARNING:" "${RESET}" " Please enter the passphrase again." >&2
+		printf "%s%s%s%s\n" "${YELLOW}${RED}" "WARNING:" "${RESET}" " Please enter the passphrase again." >&2
 	done
 }
 
@@ -151,7 +154,7 @@ encrypt_description() {
 	retry_openssl openssl pkeyutl -encrypt -pubin -inkey "$PUB_FOR_ENC" -pkeyopt rsa_padding_mode:oaep \
 		-pkeyopt rsa_oaep_md:sha256 -in "$OUTDIR/README_PROOF.txt" -out "$OUTDIR/description.enc"
 
-	base64 -w0 "$OUTDIR/description.enc" > "$OUTDIR/description.enc.b64"
+	base64 -w0 "$OUTDIR/description.enc" >"$OUTDIR/description.enc.b64"
 }
 
 verify_description() {
@@ -168,20 +171,20 @@ encrypt_archive_if_requested() {
 	if [ "$ENCRYPT_ARCHIVE" -eq 1 ]; then
 		openssl rand -out "$TMPDIR/sym.key" 64
 		IV=$(openssl rand -hex 16)
-		printf '%s\n' "$IV" > "$OUTDIR/$IV_NAME"
+		printf '%s\n' "$IV" >"$OUTDIR/$IV_NAME"
 
 		AES_KEY_HEX=$(xxd -p -c 256 "$TMPDIR/sym.key" | cut -c1-64)
 		MAC_KEY_HEX=$(xxd -p -c 256 "$TMPDIR/sym.key" | cut -c65-128)
 
 		openssl enc -aes-256-ctr -K "$AES_KEY_HEX" -iv "$IV" -in "$OUTDIR/$ARCHIVE_NAME" -out "$OUTDIR/$ENC_NAME" -nosalt
-		openssl dgst -sha256 -mac HMAC -macopt hexkey:$MAC_KEY_HEX -binary "$OUTDIR/$ENC_NAME" > "$OUTDIR/$HMAC_NAME"
-		base64 -w0 "$OUTDIR/$HMAC_NAME" > "$OUTDIR/$HMAC_NAME.b64"
+		openssl dgst -sha256 -mac HMAC -macopt hexkey:$MAC_KEY_HEX -binary "$OUTDIR/$ENC_NAME" >"$OUTDIR/$HMAC_NAME"
+		base64 -w0 "$OUTDIR/$HMAC_NAME" >"$OUTDIR/$HMAC_NAME.b64"
 
 		retry_openssl openssl pkeyutl -encrypt -pubin -inkey "$PUB_FOR_ENC" -pkeyopt rsa_padding_mode:oaep \
 			-pkeyopt rsa_oaep_md:sha256 -in "$TMPDIR/sym.key" -out "$OUTDIR/sym.key.enc"
 
-		base64 -w0 "$OUTDIR/$ENC_NAME" > "$OUTDIR/$ENC_NAME.b64"
-		base64 -w0 "$OUTDIR/sym.key.enc" > "$OUTDIR/sym.key.enc.b64"
+		base64 -w0 "$OUTDIR/$ENC_NAME" >"$OUTDIR/$ENC_NAME.b64"
+		base64 -w0 "$OUTDIR/sym.key.enc" >"$OUTDIR/sym.key.enc.b64"
 
 		shred -u "$TMPDIR/sym.key" 2>/dev/null || rm -f "$TMPDIR/sym.key"
 		shred -u "$OUTDIR/$ARCHIVE_NAME" 2>/dev/null || rm -f "$OUTDIR/$ARCHIVE_NAME"
@@ -196,7 +199,7 @@ cleanup_sensitive() {
 finalize_and_package() {
 	FINAL_PROOF="$OUTPUT_DIR/${REPO}_proof.tar.bz2"
 	tar cjf "$FINAL_PROOF" -C "$OUTPUT_DIR" "$(basename "$OUTDIR")" \
-		$( [ -f "$OUTDIR/PROOF_MANIFEST.txt.tsr" ] && printf '%s\n' "$(basename "$OUTDIR")/PROOF_MANIFEST.txt.tsr" )
+		$([ -f "$OUTDIR/PROOF_MANIFEST.txt.tsr" ] && printf '%s\n' "$(basename "$OUTDIR")/PROOF_MANIFEST.txt.tsr")
 	rm -rf "$OUTDIR"
 	printf "%s%s%s%s\n" "${BOLD}${WHITE}" "NOTICE:" "${RESET}" " Final proof archive: $FINAL_PROOF"
 	exit 0
@@ -210,7 +213,7 @@ sign_manifest() {
 }
 
 create_manifest() {
-	cat > "$OUTDIR/PROOF_MANIFEST.txt" <<EOF
+	cat >"$OUTDIR/PROOF_MANIFEST.txt" <<EOF
 archive_name=$ARCHIVE_NAME
 archive_sha256=$(cut -d' ' -f1 "$OUTDIR/$ARCHIVE_NAME.sha256")
 archive_encrypted=$ENCRYPT_ARCHIVE
@@ -232,26 +235,26 @@ timestamp_manifest() {
 	mkdir -p "$OUTDIR"
 
 	openssl ts -query -data "$OUTDIR/PROOF_MANIFEST.txt" -cert -sha256 -out "$TSQ" \
-	2>"$OUTDIR/ts_query.log" || return 6
+		2>"$OUTDIR/ts_query.log" || return 6
 
 	curl -sS -H "Content-Type: application/timestamp-query" \
-	--data-binary @"$TSQ" "$TSA_URL" -o "$TSR" || return 7
+		--data-binary @"$TSQ" "$TSA_URL" -o "$TSR" || return 7
 
 	[ ! -s "$TSR" ] && return 8
 
 	openssl ts -reply -in "$TSR" -token_out -out "$OUTDIR/tsa_token.der"
 	openssl pkcs7 -inform DER -in "$OUTDIR/tsa_token.der" -print_certs \
-	-out "$CHAIN_UNTRUSTED"
+		-out "$CHAIN_UNTRUSTED"
 
 	openssl ts -verify \
-	-data "$OUTDIR/PROOF_MANIFEST.txt" \
-	-in "$TSR" \
-	-CAfile /etc/ssl/certs/ca-certificates.crt \
-	-untrusted "$CHAIN_UNTRUSTED" \
-	-text || return 9
+		-data "$OUTDIR/PROOF_MANIFEST.txt" \
+		-in "$TSR" \
+		-CAfile /etc/ssl/certs/ca-certificates.crt \
+		-untrusted "$CHAIN_UNTRUSTED" \
+		-text || return 9
 
 	printf "%s%s%s%s\n\n" "${BOLD}${WHITE}" "NOTICE:" "${RESET}" \
-	" TSA timestamp using $TSA_URL
+		" TSA timestamp using $TSA_URL
 	 Timestamp verified successfully.
 	 The TSA certificate is not a CA certificate.
 	 Timestamping authorities issue certificates only for signing timestamps, not for acting as a root CA.
@@ -261,9 +264,6 @@ timestamp_manifest() {
 
 	# cp -f "$OUTDIR/tsa_token.der" "$TSR"
 }
-
-
-
 
 main() {
 	validate_args "$@"
@@ -280,7 +280,7 @@ main() {
 	create_manifest
 	generate_keys
 	sign_manifest
-	timestamp_manifest 
+	timestamp_manifest
 	derive_pub_for_enc
 	encrypt_description
 	verify_description
@@ -289,7 +289,6 @@ main() {
 	cleanup_sensitive
 	finalize_and_package
 }
-
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	main "$@"

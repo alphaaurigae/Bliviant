@@ -2,15 +2,15 @@
 set -euo pipefail
 IFS=$'\n\t'
 compare_proofs() {
-    local orig="$1"
-    local new="$2"
-    if cmp -s "$orig" "$new"; then
-	printf "%s%s%s%s\n" "${BOLD}${GREEN}" "SUCCESS:" "${RESET}" " Proofs match."
-        return 0
-    else
-	printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Proofs do not match."
-        return 1
-    fi
+	local orig="$1"
+	local new="$2"
+	if cmp -s "$orig" "$new"; then
+		printf "%s%s%s%s\n" "${BOLD}${GREEN}" "SUCCESS:" "${RESET}" " Proofs match."
+		return 0
+	else
+		printf "%s%s%s%s\n" "${BOLD}${RED}" "ERROR:" "${RESET}" " Proofs do not match."
+		return 1
+	fi
 }
 generate_proof_verify() {
 	local proof_dir="$1"
@@ -37,7 +37,7 @@ generate_proof_verify() {
 		tsa_sha256=none
 	fi
 
-	cat > "$out_file" <<EOF
+	cat >"$out_file" <<EOF
 archive_name=$archive_name
 archive_sha256=$archive_sha256
 archive_encrypted=$archive_encrypted
