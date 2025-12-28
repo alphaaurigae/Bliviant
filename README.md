@@ -7,7 +7,9 @@ What does it do?
 - Sample archive output/ with super secret as timestamp proof of creation.
 - Use this to sent with verifyable timestamp EG self email as attachment or cloud/blockchain updload --> later proof you had it ...
 
-# Sample log
+## Sample log
+
+### Encrypt
 ```
 ✔ ~/Desktop/Bliviant [main|● 1✚ 5…1] 
 04:26 $ '/home/mmmm/Desktop/Bliviant/run_encrypt.sh' 
@@ -99,5 +101,71 @@ INFO: Comparing original proof vs decrypted/revealed proof:
 SUCCESS: Proofs match.
 ✔ ~/Desktop/Bliviant [main|✚ 6…3] 
 04:40 $ 
+
+```
+### Decrypt
+```
+✔ ~/Desktop/Bliviant [main|✚ 6…1] 
+04:35 $ '/home/mmmm/Desktop/Bliviant/run_decrypt.sh' 
+INFO: Checking requirements...
+ PROOF_ARCHIVE=/home/mmmm/Desktop/Bliviant/output/bling_proof.tar.bz2
+ REVEAL_SCRIPT=/home/mmmm/Desktop/Bliviant/reveal/reveal_proof.sh
+ PRIVKEY_PATH=/home/mmmm/.ssh/sshkfd1
+ WORKDIR=/home/mmmm/Desktop/Bliviant
+ REVEAL_OUTPUT_DIR=/home/mmmm/Desktop/Bliviant/output/bling_proof
+SUCCESS: All requirements passed.
+NOTICE: Running OpenSSL: openssl
+pkeyutl-decrypt-inkey/home/mmmm/.ssh/sshkfd1
+-pkeyoptrsa_padding_mode:oaep-pkeyoptrsa_oaep_md:sha256
+-in/tmp/tmp.WqUdh2UyqE/description.enc-out/home/mmmm/Desktop/Bliviant/output/bling_proof/README_PROOF.txt
+Enter pass phrase for /home/mmmm/.ssh/sshkfd1:
+Enter pass phrase for /home/mmmm/.ssh/sshkfd1:
+Verified OK
+Using configuration from /usr/lib/ssl/openssl.cnf
+Verification: OK
+/home/mmmm/Desktop/Bliviant/input/bling/bin/sparcle_calc: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeCache.txt: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_CXX.bin: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/3.28.3/CMakeSystem.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/3.28.3/CompilerIdCXX/a.out: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/cmake.check_cache: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/CMakeConfigureLog.yaml: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/CMakeDirectoryInformation.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/CMakeRuleHashes.txt: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/Makefile2: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/Makefile.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/my_clean.dir/build.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/my_clean.dir/cmake_clean.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/my_clean.dir/compiler_depend.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/my_clean.dir/compiler_depend.ts: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/my_clean.dir/DependInfo.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/my_clean.dir/progress.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/progress.marks: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/build.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/cmake_clean.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/compiler_depend.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/compiler_depend.ts: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/DependInfo.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/depend.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/flags.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/link.txt: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/progress.make: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/src/sparcle_calc/main.cpp.o: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/sparcle_calc.dir/src/sparcle_calc/main.cpp.o.d: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/CMakeFiles/TargetDirectories.txt: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/cmake_install.cmake: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build_cmake.sh: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/compile_commands.json: OK
+/home/mmmm/Desktop/Bliviant/input/bling/build/Makefile: OK
+/home/mmmm/Desktop/Bliviant/input/bling/clean_cmake.sh: OK
+/home/mmmm/Desktop/Bliviant/input/bling/CMakeLists.txt: OK
+/home/mmmm/Desktop/Bliviant/input/bling/diamonds.db: OK
+/home/mmmm/Desktop/Bliviant/input/bling/src/sparcle_calc/main.cpp: OK
+Restore complete: /home/mmmm/Desktop/Bliviant/output/bling_proof
+INFO: Comparing original proof vs decrypted/revealed proof:
+SUCCESS: Proofs match.
+✔ ~/Desktop/Bliviant [main|✚ 6…3] 
 
 ```
