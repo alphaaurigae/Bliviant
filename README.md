@@ -8,7 +8,7 @@ What does it do?
 - Use this to sent with verifyable timestamp EG self email as attachment or cloud/blockchain updload --> later proof you had it ...
 
 # Sample log
-
+```
 ✔ ~/Desktop/Bliviant [main|● 1✚ 5…1] 
 04:26 $ '/home/mmmm/Desktop/Bliviant/run_encrypt.sh' 
 Checking requirements...
@@ -100,3 +100,4 @@ SUCCESS: Proofs match.
 ✔ ~/Desktop/Bliviant [main|✚ 6…3] 
 04:40 $ 
 
+```
